@@ -1,6 +1,6 @@
-const Rough = require("../../models/Rough");
-const Sorting = require("../../Models/Sorting");
-const Unused = require("../../Models/Unused");
+const Rough = require("../../models/Rough.js");
+const Sorting = require("../../Models/Sorting.js");
+const Unused = require("../../Models/Unused.js");
 const { v4: uuidv4 } = require("uuid");
 
 const create = async (req, res) => {

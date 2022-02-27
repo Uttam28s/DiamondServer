@@ -1,6 +1,6 @@
-const Rough = require("../../models/Rough");
-const OfficePacket = require("../../Models/OfficePacket");
-const Office = require("../../Models/Office");
+const Rough = require("../../models/Rough.js");
+const OfficePacket = require("../../Models/OfficePacket.js");
+const Office = require("../../Models/Office.js");
 
 const getList = async (req, res) => {
   // const body = req.body;

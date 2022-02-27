@@ -41,6 +41,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// app.use("/",)
 // app.use("/api/auth", authRoute);
 app.use("/api/rough", roughRoutes);
 app.use("/api/office", officeRoutes);
