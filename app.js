@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const env = require("dotenv").config().parsed;
-const port = env.APP_PORT || 3002;
+const port = process.env.PORT || env.APP_PORT || 3002;
 const passport = require("passport");
 const { roughRoutes, officeRoutes, commonRoutes } = require("./Routes");
 
