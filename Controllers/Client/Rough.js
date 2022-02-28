@@ -1,4 +1,4 @@
-const Rough = require("../../models/Rough.js");
+const Rough = require("../../Models/Rough.js");
 const Sorting = require("../../Models/Sorting.js");
 const Unused = require("../../Models/Unused.js");
 const { v4: uuidv4 } = require("uuid");
