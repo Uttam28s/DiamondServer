@@ -1,4 +1,4 @@
-const Rough = require("../../models/Rough.js");
+const Rough = require("../../Models/Rough.js");
 const OfficePacket = require("../../Models/OfficePacket.js");
 const Office = require("../../Models/Office.js");
 
