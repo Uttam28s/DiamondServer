@@ -5,16 +5,16 @@ const mongoose = require("mongoose");
 const env = require("dotenv").config().parsed;
 const port = process.env.PORT || env.APP_PORT || 3002;
 const passport = require("passport");
-const { roughRoutes, officeRoutes, commonRoutes } = require("./Routes");
+const { roughRoutes, officeRoutes, commonRoutes } = require("./Routes/index");
 
-const dConnection =
-  env.DB_CONNECTION +
-  "://" +
-  env.DB_HOST +
-  ":" +
-  env.DB_PORT +
-  "/" +
-  env.DB_DATABASE;
+const dConnection = `mongodb+srv://Uttam28s:76986Utt%40m@diamond.sswlz.mongodb.net/Diamond?retryWrites=true&w=majority`
+  // env.DB_CONNECTION +
+  // "://" +
+  // env.DB_HOST +
+  // ":" +
+  // env.DB_PORT +
+  // "/" +
+  // env.DB_DATABASE;
 
 const options = {
   useCreateIndex: true,

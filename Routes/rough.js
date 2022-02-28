@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../Controllers");
+const controller = require("../Controllers/index");
 
 // router.get('/verify-email', controller.AuthController.verifyEmail);
 
