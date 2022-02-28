@@ -1,5 +1,8 @@
 {
   "name": "scroll",
+  "engines": {
+    "node": "12.22.9"
+   },
   "version": "1.0.0",
   "description": "Social media app",
   "main": "app.js",
