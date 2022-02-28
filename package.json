@@ -3,8 +3,8 @@
   "engines": {
     "node": "12.22.9"
    },
-  "version": "1.0.0",
-  "description": "Social media app",
+  "version": "1.0.1",
+  "description": "Diamond server",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/pmoremp/scroll.git"
+    "url": "git+https://github.com/Uttam28s/DiamondServer.git"
   },
   "author": "Prashant Morem",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/pmoremp/scroll/issues"
+    "url": "https://github.com/Uttam28s/DiamondServer"
   },
-  "homepage": "https://gitlab.com/pmoremp/scroll#readme",
+  "homepage": "https://github.com/Uttam28s/DiamondServer#readme",
   "dependencies": {
     "apn": "^2.2.0",
     "async": "^3.2.0",
