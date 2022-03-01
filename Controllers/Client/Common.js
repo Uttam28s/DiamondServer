@@ -1,6 +1,7 @@
 const Rough = require("../../Models/Rough.js");
 const OfficePacket = require("../../Models/OfficePacket.js");
 const Office = require("../../Models/Office.js");
+const Unused = require("../../Models/Unused.js");
 
 const getList = async (req, res) => {
   // const body = req.body;
@@ -78,7 +79,30 @@ const getOfficeSrno = async (req, res) => {
   }
 };
 
+const unusedList = async (req, res) => {
+  const roughId = req.query["roughId"];
+  if (roughId && roughId === 0) {
+    res.json({ message: " no office data available" });
+  } else {
+    const data = await Unused.findOne(
+      { rough_id:roughId  }
+    );
+    
+    try {
+      if (data != null) {
+        res.json({ data, message: "Data inserted Successfully" });
+      } else {
+        res.json({ message: "Database Error" });
+      }
+    } catch (error) {
+      res.json({ message: error });
+    }
+  }
+    
+};
+
 module.exports = {
   getList,
   getOfficeSrno,
+  unusedList
 };
