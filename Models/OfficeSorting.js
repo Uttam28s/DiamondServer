@@ -13,6 +13,7 @@ const objSchema = mongoose.Schema(
       ref: "Offices",
       required: true,
     },
+    sumOfSortingCarat: Number,
     mackable: Number,
     total_sorting_carat: Number,
     sortingData: Object,

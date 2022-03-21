@@ -1,7 +1,11 @@
 module.exports = {
   //   AuthController: require("./AuthController"),
-  RoughCreate: require("./Client/Rough"),
-  officeCreate: require("./Client/Office"),
-  officeCreatePacket: require("./Client/OfficePacket"),
-  commonController: require("./Client/Common"),
+  RoughCreate: require("./Client/Office/Rough"),
+  officeCreate: require("./Client/Office/Office"),
+  officeCreatePacket: require("./Client/Office/OfficePacket"),
+  commonController: require("./Client/Office/Common"),
+  factoryCreate: require("./Client/Factory/Factory"),
+  factoryCreatePacket: require("./Client/Factory/FactoryPacket"),
+
+
 };

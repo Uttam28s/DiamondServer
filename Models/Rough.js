@@ -17,6 +17,7 @@ const objSchema = mongoose.Schema(
     days: Number,
     date: Date,
     lastdate: Date,
+    officeReturnCaret: Number
   },
   {
     timestamps: true,

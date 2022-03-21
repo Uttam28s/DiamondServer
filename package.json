@@ -2,7 +2,7 @@
   "name": "diamondServer",
   "engines": {
     "node": "12.22.9"
-   },
+  },
   "version": "1.0.1",
   "description": "Diamond server",
   "main": "app.js",
@@ -14,7 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/Uttam28s/DiamondServer.git"
   },
-  "author": "Prashant Morem",
+  "author": "Uttam Moradiya",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Uttam28s/DiamondServer"

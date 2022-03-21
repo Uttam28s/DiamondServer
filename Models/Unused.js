@@ -14,6 +14,9 @@ const objSchema = mongoose.Schema(
     after_office_carat: Number,
     beforefactory_carat: Number,
     after_factory_carat: Number,
+    mackable: Number,
+    office_return_sorting_carat: Number,
+
   },
   {
     timestamps: true,
