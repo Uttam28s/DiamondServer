@@ -8,7 +8,6 @@ const create = async (req, res) => {
 
   const completed = req.body.completed || 0;
   const id = uuidv4();
-  // date = new Date(body.date);
   // const days = Number(body.days);
   // var lastdate = new Date(body.date);
   // lastdate.setDate(lastdate.getDate() + days);
