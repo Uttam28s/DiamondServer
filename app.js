@@ -3,9 +3,9 @@ const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const env = require("dotenv").config().parsed;
-const port = process.env.PORT || env.APP_PORT || 3002;
+const port = process.env.PORT || 3003;
 const passport = require("passport");
-const { roughRoutes, officeRoutes, commonRoutes } = require("./Routes/index");
+const {roughRoutes, officeRoutes, commonRoutes, factoryRoutes, deleteRoutes, editRoutes} = require("./Routes/index");
 
 const dConnection = `mongodb+srv://Uttam28s:76986Utt%40m@diamond.sswlz.mongodb.net/Diamond?retryWrites=true&w=majority`
   // env.DB_CONNECTION +
@@ -46,6 +46,9 @@ app.use(bodyParser.json());
 app.use("/api/rough", roughRoutes);
 app.use("/api/office", officeRoutes);
 app.use("/api/common", commonRoutes);
+app.use("/api/factory", factoryRoutes);
+app.use("/api/delete", deleteRoutes)
+app.use("/api/edit", editRoutes)
 
 app.use(passport.initialize());
 app.use(passport.session());
