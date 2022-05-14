@@ -7,7 +7,6 @@ const passport = require("passport");
 const {roughRoutes, officeRoutes, commonRoutes, factoryRoutes, deleteRoutes, editRoutes} = require("./Routes/index");
 const port = process.env.PORT || env.APP_PORT || 3003;
 const cors = require("cors");
-const passport = require("passport");
 
 const dConnection = 'mongodb+srv://Uttam28s:76986Utt%40m@diamond.sswlz.mongodb.net/Diamond?retryWrites=true&w=majority'
 
