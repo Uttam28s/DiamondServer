@@ -1,7 +1,9 @@
 const Rough = require("../../../Models/Rough");
 const OfficePacket = require("../../../Models/OfficePacket");
 const Office = require("../../../Models/Office");
-const Unused = require("../../../Models/Unused")
+const Unused = require("../../../Models/Unused");
+const FactoryPacket = require("../../../Models/FactoryPacket");
+const OfficeSorting = require("../../../Models/OfficeSorting");
 
 const getList = async (req, res) => {
   // const body = req.body;
@@ -41,6 +43,41 @@ const getList = async (req, res) => {
 };
 
 const getOfficeSrno = async (req, res) => {
+
+
+ 
+
+ //await FactoryPacket.find().then((d)=>{
+    
+  //   d.map(async(c,i)=>{
+  //     console.log("🚀 ~ file: Common.js ~ line 52 ~ awaitFactoryPacket.find ~ d", d)
+  //    await FactoryPacket.updateOne({id:c.id},{
+  //       $set:{
+  //         srno:i+1
+  //       }
+  //     })
+
+  //   })
+  // })
+
+
+  await OfficeSorting.find().then(async(data)=>{
+    console.log('data', data)
+    await data.map(async(val)=>{
+     await OfficeSorting.updateOne({_id:val._id},{
+       $set:{
+         rough_id: val.office_id ,
+         office_id : val.rough_id
+       }
+     })
+    })
+  })
+
+
+
+
+
+
   // const body = req.body;
   const roughId = req.query["officeId"];
   const srno = req.query["srno"];
@@ -50,9 +87,9 @@ const getOfficeSrno = async (req, res) => {
   } else if (srno) {
     const packetSrNo = await OfficePacket.find(
       {office_id: roughId, return: false},
-      {srno: 1, _id: 1}
+     
     );
-    console.log("getList -> caratList", packetSrNo);
+   //; console.log("getList -> caratList", packetSrNo);
     try {
       // console.log("createRough -> body", body, "postsaved", postSaved);
       if (packetSrNo != null) {

@@ -6,6 +6,8 @@ module.exports = {
   commonController: require("./Client/Office/Common"),
   factoryCreate: require("./Client/Factory/Factory"),
   factoryCreatePacket: require("./Client/Factory/FactoryPacket"),
+  deleteModel: require('./Client/Modification/delete'),
+  editModel: require('./Client/Modification/Edit')
 
 
 };
