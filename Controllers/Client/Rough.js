@@ -117,14 +117,11 @@ const sortingCreate = async (req, res) => {
       res.json({ message: error });
     }
   } else {
-    const unsusedData = new Unused({
-      rough_id: body.rough_id,
-      carat: rough.carat,
+    try {
+      Unused.updateOne({rough_id:body.rough_id},{$set:{
       copyCarat: rough.carat - total_sorting_carat,
       after_sorting_carat: rough.carat - total_sorting_carat,
-    });
-    try {
-      unsusedData.save();
+    }});
     } catch (error) {
       res.json({ message: error });
     }

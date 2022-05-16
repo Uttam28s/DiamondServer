@@ -18,9 +18,16 @@ const create = async (req, res) => {
     completed,
     rough_total: req.body.carat * req.body.rate,
   });
+
   try {
     const postSaved = await post.save();
-    // console.log("createRough -> body", body, "postsaved", postSaved);
+    const unused = new Unused({
+      rough_id :post._id,
+      carat: body.carat,
+      copyCarat : body.carat,
+      before_office_carat:body.carat,
+     })
+     unused.save()
     if (postSaved != null) {
       res.json({ message: "Data inserted Successfully" });
     } else {
@@ -119,15 +126,13 @@ const sortingCreate = async (req, res) => {
     } catch (error) {
       res.json({ message: error });
     }
-  } else {
-    const unsusedData = new Unused({
-      rough_id: body.rough_id,
-      carat: rough.carat,
+  } else { try {
+   Unused.updateOne({ rough_id: body.rough_id,},{$set:{
       copyCarat: rough.carat - total_sorting_carat,
       after_sorting_carat: rough.carat - total_sorting_carat,
-    });
-    try {
-      unsusedData.save();
+    }});
+   
+    
     } catch (error) {
       res.json({ message: error });
     }

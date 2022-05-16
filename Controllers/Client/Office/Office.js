@@ -41,16 +41,17 @@ const create = async (req, res) => {
       res.json({message: error});
     }
   } else {
-    const unsusedData = new Unused({
-      rough_id: body.rough_id,
-      carat: rough.carat,
-      copyCarat: (rough.carat - body.office_total_carat).toFixed(2),
-      before_office_carat: (rough.carat - body.office_total_carat).toFixed(2),
-    });
     try {
-      unsusedData.save();
+      Unused({ rough_id: body.rough_id }, {
+        $set: {
+          copyCarat: (rough.carat - body.office_total_carat).toFixed(2),
+          before_office_carat: (rough.carat - body.office_total_carat).toFixed(2),
+        }
+      });
+
+
     } catch (error) {
-      res.json({message: error});
+      res.json({ message: error });
     }
   }
   try {
@@ -128,6 +129,7 @@ const officeView = async (req, res) => {
   if (officeID || roughId) {
 
     const data = await Office.find(roughId ? {rough_id: roughId} : {_id: officeID});
+      
     try {
       // console.log("createRough -> body", body, "postsaved", postSaved);
       if (data != null) {

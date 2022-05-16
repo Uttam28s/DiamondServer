@@ -19,9 +19,11 @@ const objSchema = mongoose.Schema(
         //  total_packet: Number,
         copyCarat: Number,
         packetNo: Number,
-        all_process: Array,
+       // all_process: Array,
         occupy: Boolean,
         lastCarat: Number,
+        main_carat: Number,
+        srno:Number
 
         // office_return_sorting_carat: Number,
         //   mackable: Number
