@@ -84,9 +84,10 @@ const create = async (req, res) => {
         packet_status: "Sawing Issue",
       };
       // console.log("create -> data", data);
-
+      const index = (await officePacket.find({office_id: body.office_id})).length+1
       const officePacket = new OfficePacket({
         ...data,
+        srno:index
       });
       // console.log("create -> officePacket", officePacket);
       try {
@@ -175,9 +176,10 @@ const create = async (req, res) => {
         packet_status: "Chapka Issue",
       };
       // console.log("create -> data", data);
-
+      const index = (await OfficePacket.find({office_id: body.office_id})).length
       const officePacket = new OfficePacket({
         ...data,
+        srno:index
       });
       // console.log("create -> officePacket", officePacket);
       try {
@@ -209,22 +211,31 @@ const create = async (req, res) => {
 };
 
 const officePacketView = async (req, res) => {
-  const body = req.query["id"];
-  const type = req.query["type"];
-  const packetDetails = req.query["packetId"];
-  const officeID = req.query["officeID"]
-  const checkStatus = req.query["checkStatus"]
+  const { id="",type="",packetId="",officeID="",checkStatus="",from="",to=""}=req.query
+   if (from && to && type) {
+     let query = {
+         officeID: officeID,
+         srno: { $gte: from, $lte: to },
+     };
+     if (type) {
+       query = { ...query, type: type };
+ }
+     const bulkPacket = await OfficePacket.find(query);
+     const filtered = bulkPacket.filter((data) =>
+       data.packet_status.includes("Issue")
+     );
+     res.json({ data: filtered });
+     return;
+   }
   if (officeID && checkStatus) {
     const packetdetail = await OfficePacket.find({ office_id: officeID });
     const OfficeRough = await Office.find({ _id: officeID })
-    console.log("officeView -> body a", OfficeRough, officeID, packetDetails, body);
     let flag = { msg: "All Packet Is Returned ", returned: true }
     packetdetail.map((data) => {
       if (data.packet_status.includes("Issue")) {
         flag = { msg: "All Packet Is Not Returned Yet", returned: false }
       }
     })
-
     res.json({
       ...flag,
       copyCarat: OfficeRough[0].copyCarat,
@@ -233,8 +244,8 @@ const officePacketView = async (req, res) => {
     //res.send()
     return
   }
-  if (packetDetails) {
-    const packetdetail = await OfficePacket.findOne({ _id: packetDetails });
+  if (packetId) {
+    const packetdetail = await OfficePacket.findOne({ _id: packetId });
     try {
       // console.log("createRough -> body", body, "postsaved", postSaved);
       if (packetdetail != null) {
@@ -250,13 +261,13 @@ const officePacketView = async (req, res) => {
     }
   } else {
     if (type === "sawing") {
-      const data = await OfficePacket.find({ type: "sawing", office_id: body })
+      const data = await OfficePacket.find({ type: "sawing", office_id: id })
         .skip(parseInt(req.query["skip"]))
         .limit(parseInt(req.query["limit"]))
         .sort({ createdAt: -1 });
       const totalData = await OfficePacket.find({
         type: "sawing",
-        office_id: body,
+        office_id: id,
       });
       try {
         // console.log("createRough -> body", body, "postsaved", postSaved);
@@ -273,13 +284,13 @@ const officePacketView = async (req, res) => {
         res.json({ message: error });
       }
     } else {
-      const data = await OfficePacket.find({ type: "chapka", office_id: body })
+      const data = await OfficePacket.find({ type: "chapka", office_id: id })
         .skip(parseInt(req.query["skip"]))
         .limit(parseInt(req.query["limit"]))
         .sort({ createdAt: -1 });
       const totalData = await OfficePacket.find({
         type: "chapka",
-        office_id: body,
+        office_id: id,
       });
       try {
         // console.log("createRough -> body", body, "postsaved", postSaved);

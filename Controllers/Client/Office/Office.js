@@ -10,6 +10,7 @@ const create = async (req, res) => {
   const id = uuidv4();
   const unUsed = await Unused.findOne({rough_id: body.rough_id});
   const rough = await Rough.findOne({_id: body.rough_id});
+  const index = (await Office.find({rough_id: body.rough_id})).length
   const officePacket = new Office({
     ...body,
     id,
@@ -17,6 +18,7 @@ const create = async (req, res) => {
     copyCarat: body.office_total_carat,
     carat: rough.carat,
     packetNo: 0,
+    srno:index
   });
   // console.log("create -> rough", rough);
   // if (body.office_total_carat > Unused.copyCarat) {
@@ -56,7 +58,7 @@ const create = async (req, res) => {
   }
   try {
     const postSaved = await officePacket.save();
-    console.log("createRough -> body", "postsaved", rough);
+   // console.log("createRough -> body", "postsaved", rough);
     await Rough.updateOne(
       {_id: body.rough_id},
       {$set: {officecarat: (rough.officecarat || 0) + body.office_total_carat}}
@@ -79,9 +81,9 @@ const returnPacket = async (req, res) => {
   const returnSorting = new OfficeSort({...body});
   try {
     const returnSortingPackets = await returnSorting.save();
-    console.log("createRough -> body", "postsaved", returnSortingPackets, body);
+   // console.log("createRough -> body", "postsaved", returnSortingPackets, body);
     if (returnSortingPackets != null && unused) {
-      console.log('first', body.mackable, body, body.createDate)
+     // console.log('first', body.mackable, body, body.createDate)
       await Office.updateOne(
         {_id: body.rough_id, rough_id: body.office_id},
         {
@@ -123,13 +125,16 @@ const returnPacket = async (req, res) => {
 const officeView = async (req, res) => {
   const roughId = req.query["roughId"];
   const officeID = req.query["officeID"];
+  // const datasheet = req.query["bulk"]
   // const officePacket = OfficePackets.find({off})
-  console.log("viewList -> data", roughId, officeID);
+ // console.log("viewList -> data", roughId, officeID);
+
+  // if(bulk){
+
+  // }
 
   if (officeID || roughId) {
-
     const data = await Office.find(roughId ? {rough_id: roughId} : {_id: officeID});
-      
     try {
       // console.log("createRough -> body", body, "postsaved", postSaved);
       if (data != null) {

@@ -62,7 +62,7 @@ const getOfficeSrno = async (req, res) => {
 
 
   await OfficeSorting.find().then(async(data)=>{
-    console.log('data', data)
+   // console.log('data', data)
     await data.map(async(val)=>{
      await OfficeSorting.updateOne({_id:val._id},{
        $set:{
@@ -118,7 +118,6 @@ const getOfficeSrno = async (req, res) => {
 
 const unusedList = async (req, res) => {
   const roughId = req.query["roughId"];
-  console.log("🚀 ~ file: Common.js ~ line 84 ~ unusedList ~ roughId", roughId)
   if (roughId && roughId === 0) {
     res.json({message: " no office data available"});
   } else {

@@ -14,6 +14,8 @@ const create = async (req, res) => {
     const id = uuidv4();
     const unused = await Unused.findOne({rough_id: body.rough_id});
     const rough = await Rough.findOne({_id: body.rough_id});
+    const index = (await Factory.find({rough_id:body.rough_id})).length
+    
 
     //  res.json({ msg: "passed", body, })
 
@@ -25,7 +27,8 @@ const create = async (req, res) => {
         carat: rough.caret,
         packetNo: 0,
         copyCarat: body.factory_total_carat,
-        main_carat: rough.carat
+        main_carat: rough.carat,
+        srno:index
       //  occupy: true,
        // lastCarat: body.factory_total_carat
     })
@@ -123,10 +126,13 @@ const factoryView = async (req, res) => {
     const factoryId = req.query["factoryId"];
     const totalCarat = req.query["totalcarat"]
     const returnflag =  req.query["return"]
+    const range = req.query['range']
     let flag = true
     let dataArray = []
     // const officePacket = OfficePackets.find({off})
     console.log("viewList -> data", roughId, factoryId);
+
+ 
 
     if (factoryId || roughId) {
 

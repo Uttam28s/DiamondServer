@@ -13,7 +13,7 @@ const Office = require("../../../Models/Office");
 const editMainRough = async (req, res) => {
     const body = req.body
     const rough = await Rough.findOne({ _id: body.id })
-
+    const diff =  bosy.difference
     try {
         await Rough.updateOne({ _id: body.id }, {
             $set: {
@@ -22,16 +22,17 @@ const editMainRough = async (req, res) => {
                 rate: body.rate || rough.rate,
                 rough_total: body.rough_total || rough.rough_total,
                 days: body.days || rough.days,
-                lastdate: body.lastdate || rough.lastdate
+                lastdate: body.lastdate || rough.lastdate,
+                date: body.date || rough.date,
             },
             $inc: {
-                carat: body.carat || rough.carat,
+                carat:diff,
             }
         })
         await Unused.updateOne({ rough_id: body.id }, {
             $inc: {
-                carat: Number(body.carat),
-                copyCarat: Number(body.carat)
+                carat: Number(diff),
+                copyCarat: Number(diff)
             }
         })
         res.json({ msg: "updated Rough" })
@@ -46,31 +47,35 @@ const editOfficeAndFactoryRough = async (req, res) => {
     const officeRough = await Office.findOne({_id: body.id})
     const factoryRough = await Factory.findOne({_id: body.id})
     const unused = await Unused.findOne({_id: body.roughId})
-
+    
     try {
-        body.office && await Office.updateOne({id: body.id}, {
+        console.log("🚀 ~ file: Edit.js ~ line 47 ~ editOfficeAndFactoryRough ~ body", body)
+        body.office && await Office.updateOne({_id: body.id}, {
             $set: {
                 copyCarat: officeRough.copyCarat + (body.difference || 0),
-                carat: officeRough.carat + (body.difference || 0),
                 office_assigne_name: body.office_assigne_name || officeRough.office_assigne_name,
                 assign_date: body.assign_date || officeRough.assign_date,
+                office_total_carat:officeRough.office_total_carat + (body.difference||0)
                 //  return_date: body.return_date || officeRough.return_date,
             }
         })
+        let a =  await Office.find({_id: body.id})
+        console.log("🚀 ~ file: Edit.js ~ line 47 ~ editOfficeAndFactoryRough ~ body",a)
 
-        body.factory && await Factory.updateOne({id: body.id}, {
+        body.factory && await Factory.updateOne({_id: body.id}, {
             $set: {
                 copyCarat: factoryRough.copyCarat + (body.difference || 0),
                 factory_total_carat: factoryRough.factory_total_carat + (body.difference || 0),
-                factory_assigne_name: body.factory_assigne_name || factoryRough.factory_assigne_name,
                 assign_date: body.assign_date || factoryRough.assign_date,
+                factory_assigne_name: body.factory_assigne_name || factoryRough.factory_assigne_name,
                 //  return_date: body.return_date || factoryRough.return_date,
             }
         })
 
-        await Unused.updateOne({_id: body.roughId}, {
+        await Unused.updateOne({rough_id: body.roughId}, {
             $set: {copyCarat: unused.copyCarat + (body.difference || 0)}
         })
+        res.json({msg: "sucess"})
     } catch {
         res.json({msg: "database error"})
     }
@@ -85,7 +90,7 @@ const editOfficeSubPacket = async (req, res) => {
 
     try {
         let commanObj =
-            body.sawing ? {
+            body.packet_status=="sawing" ? {
                 sawing_issueCarat: officePacket.sawing_issueCarat + (body.difference || 0),
                 sawing_issuePcs: officePacket.sawing_issuePcs + (body.pcs_difference || 0),
                 sawing_manager_name: body.manager_name || officePacket.sawing_manager_name,
@@ -100,7 +105,7 @@ const editOfficeSubPacket = async (req, res) => {
         if (body.return) {
 
             commanObj =
-                body.sawing ? {
+            body.packet_status=="sawing" ? {
                     ...commanObj,
                     sawing_return_date: body.sawing_return_date || officePacket.sawing_return_date,
                     sawing_return_carat: officePacket.sawing_return_carat + (body.return_difference || 0),

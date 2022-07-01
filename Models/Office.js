@@ -19,7 +19,8 @@ const objSchema = mongoose.Schema(
     copyCarat: Number,
     packetNo: Number,
     office_return_sorting_carat: Number,
-    mackable: Number
+    mackable: Number,
+    srno:Number
   },
   {
     timestamps: true,

@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const create = async (req, res) => {
   const body = req.body;
+  const index = (await Rough.find()).length
 
   const completed = req.body.completed || 0;
   const id = uuidv4();
@@ -16,6 +17,7 @@ const create = async (req, res) => {
     id,
     completed,
     rough_total: req.body.carat * req.body.rate,
+    srno:index
   });
   try {
     const postSaved = await post.save();

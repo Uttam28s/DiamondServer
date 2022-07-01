@@ -3,6 +3,7 @@ const Factory = require("../../../Models/Factory");
 const FactoryPacket = require("../../../Models/FactoryPacket");
 const moment = require("moment");
 const { v4: uuidv4 } = require("uuid");
+const { resolveContent } = require("nodemailer/lib/shared");
 // const {BorderStyle} = require("@material-ui/icons");
 // const Unused = require("../../Models/Unused");
 
@@ -68,8 +69,10 @@ const create = async (req, res) => {
                     copyCarat: (factory.copyCarat || factory.factory_total_carat) - body.assign_carat,
                 }
             })
+            const index = (await FactoryPacket.find({factory_id: body.factory_id})).length+1
             const factoryPacket = await FactoryPacket({
-                ...data
+                ...data,
+                srno:index
             })
             factoryPacket.save()
         }
@@ -84,6 +87,12 @@ const factoryPacketView = async (req, res) => {
   const factoryId = req.query["factory_id"];
   const returnFlag = req.query["returnCheck"];
   let flag = true;
+  let range = req.query["range"] 
+  if(range){
+    const bulkPacket  = await FactoryPacket.find({factory_id:factoryId}).skip(Number(range.split("-")[0])).limit(Number(range.split("-")[1]))
+    res.json({data:bulkPacket})
+    return    
+}
   try {
     const factory = await FactoryPacket.find({ factory_id: factoryId });
     const mainFactory = await Factory.find({_id:factoryId})
