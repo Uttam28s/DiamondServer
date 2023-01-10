@@ -169,7 +169,6 @@ const sortingCreate = async (req, res) => {
     try {
       console.log("sortingCreate -> post", post);
       const sortingSaved = await post.save();
-      // console.log("createRough -> body", body, "postsaved", sortingSaved);
       if (sortingSaved != null) {
         res.json({ message: "Data inserted Successfully", data: post });
       } else {
@@ -187,7 +186,6 @@ const sortingList = async (req, res) => {
   const data = await Sorting.find({ id: body });
   console.log("viewList -> data", data);
   try {
-    // console.log("createRough -> body", body, "postsaved", postSaved);
     if (data != null) {
       res.json({ data, message: "Data retrive Successfully" });
     } else {

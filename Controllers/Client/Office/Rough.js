@@ -2,6 +2,8 @@ const Rough = require("../../../Models/Rough");
 const Sorting = require("../../../Models/Sorting");
 const Unused = require("../../../Models/Unused");
 const { v4: uuidv4 } = require("uuid");
+const Factory = require("../../../Models/Factory");
+const FactoryPacket = require("../../../Models/FactoryPacket");
 
 const create = async (req, res) => {
   const body = req.body;
@@ -12,12 +14,15 @@ const create = async (req, res) => {
   // const days = Number(body.days);
   // var lastdate = new Date(body.date);
   // lastdate.setDate(lastdate.getDate() + days);
+  const roughData = await Rough.find()
   const post = new Rough({
     ...body,
     id,
     completed,
     rough_total: req.body.carat * req.body.rate,
+    Id: Number(roughData?.[roughData.length - 1]?.Id || 0 ) + 1
   });
+  console.log("🚀 ~ file: Rough.js:26 ~ create ~ post", post)
 
   try {
     const postSaved = await post.save();
@@ -209,9 +214,33 @@ const sortingList = async (req, res) => {
   }
 };
 
+
+const getPolishedRough = async (req, res) => {
+  const { roughId } = req.query
+  console.log("🚀 ~ file: Rough.js:220 ~ getPolishedRough ~ roughId", roughId)
+  const factoryIds = await Factory.find({ rough_id : roughId })
+  console.log("🚀 ~ file: Rough.js:221 ~ getPolishedRough ~ factoryIds ", factoryIds)
+  let data = []
+  factoryIds.map((ele) => {
+    console.log("🚀 ~ file: Rough.js:226 ~ factoryIds.map ~ ele?.polished + ele?.loseCarat === ele?.factory_total_carat", ele?.polished + ele?.loseCarat , ele?.factory_total_carat)
+    if(ele?.polished + ele?.loseCarat === ele?.factory_total_carat){
+      data.push({
+        factory_total_carat : ele?.factory_total_carat,
+        copyCarat : ele?.copyCarat,
+        _id : ele?._id
+      })
+    }
+  })
+  console.log("🚀 ~ file: Rough.js:230 ~ factoryIds.map ~ data", data)
+
+  res.json({ data,  message: "Data retrive Successfully" });
+
+}
+
 module.exports = {
   create,
   viewList,
   sortingCreate,
   sortingList,
+  getPolishedRough
 };

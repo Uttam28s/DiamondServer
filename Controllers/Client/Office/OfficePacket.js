@@ -52,6 +52,7 @@ const create = async (req, res) => {
                 $set: {
                   copyCarat: office.copyCarat + body.returnCarat,
                 },
+                $inc : { loseCarat : body.difference || officeOnePacket.sawing_issueCarat - body.returnCarat }
               }
             );
             res.json({ message: "Data Updates Successfully" });
@@ -143,6 +144,7 @@ const create = async (req, res) => {
                 $set: {
                   copyCarat: office.copyCarat + body.returnCarat,
                 },
+                $inc : { loseCarat : body.difference || officeOnePacket.chapka_issueCarat - body.returnCarat }
               }
             );
             res.json({ message: "Data Updates Successfully" });

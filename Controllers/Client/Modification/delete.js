@@ -13,10 +13,9 @@ const {query} = require("express");
 
 
 const mainRough = async (req, res) => {
-    const roughId = req.body.id
+    const { roughId } = req.body
     const rough = await Rough.findOne({_id: roughId})
     const sorting = await Sorting.find({rough_id: roughId})
-    console.log('first', req.body.id)
     if (rough) {
         try {
             await Rough.deleteMany({_id: roughId})
@@ -41,7 +40,7 @@ const mainRough = async (req, res) => {
 
 const officeRough = async (req, res) => {
 
-    const officeId = req.body.id
+    const { officeId } = req.body
     const office = await Office.findOne({_id: officeId})
     try {
         console.log("🚀 ~ file: delete.js ~ line 48 ~ officeRough ~ office", office)
@@ -52,6 +51,10 @@ const officeRough = async (req, res) => {
                         {rough_id: office.rough_id},
                         {$inc: {copyCarat: office.office_total_carat}}
                     )
+                await Rough.findOneAndUpdate(
+                    {_id: office.rough_id},
+                    {office_allocated_carat: office.carat - office.office_total_carat }
+                )
                 await Office.deleteOne({_id: officeId});
                 await OfficePacket.deleteMany({office_id: officeId});
                 await OfficeSorting.deleteMany({office_id: officeId});
@@ -72,8 +75,10 @@ const officeRough = async (req, res) => {
 
 
 const factoryRough = async (req, res) => {
-    const factoryId = req.body.id
+    const {factoryId} = req.body
+    console.log("🚀 ~ file: delete.js:79 ~ factoryRough ~ factoryId", factoryId)
     const factory = await Factory.findOne({_id: factoryId})
+    console.log("🚀 ~ file: delete.js:81 ~ factoryRough ~ factory", factory)
 
     try {
         if (factory) {
@@ -95,7 +100,7 @@ const factoryRough = async (req, res) => {
 
 const officeSubPacket = async (req, res) => {
 
-    const officePacketId = req.body.id
+    const { officePacketId } = req.body
     const officeSubPacket = await OfficePacket.findOne({_id: officePacketId})
     try {
         !officeSubPacket.return && await Office.findOneAndUpdate(

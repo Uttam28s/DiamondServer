@@ -64,7 +64,7 @@
 //       // console.log("createRough -> body", body, "postsaved", postSaved);
 //       await Rough.updateOne(
 //         { _id: body.rough_id },
-//         { $set: { factorycarat: body.factory_total_carat } }
+//         { $set: { factory_allocated_carat: body.factory_total_carat } }
 //       );
 //       if (postSaved != null) {
 //         res.json({ message: "Data inserted Successfully", data: body });

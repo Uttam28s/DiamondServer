@@ -10,8 +10,13 @@ router.get("/subpacket/view", controller.factoryCreatePacket.factoryPacketView);
 router.post("/create/packet", controller.factoryCreatePacket.create);
 router.post("/return", controller.factoryCreate.returnPacket);
 router.post("/subpacket/return", controller.factoryCreatePacket.factorySubPacketReturn)
-router.post("/return",controller.factoryCreate.returnFactoryPacket)
 
+
+router.get("/getpacketno",controller.factoryCreatePacket.getPacketNo)
+
+router.get("/checkDifference",controller.factoryCreatePacket.getDifference)
+// router.post("/return",controller.factoryCreate.returnFactoryPacket)
+router.get("/getPolishReportData",controller.factoryCreatePacket.getPolishReportData)
 // // router.post('/register-verify', controller.AuthController.verifyRegister);
 // // router.post('/login', controller.AuthController.login);
 // // router.post('/social-login', controller.AuthController.socialLogin);

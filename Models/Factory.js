@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+    const mongoose = require("mongoose");
 
 const objSchema = mongoose.Schema(
     {
@@ -7,6 +7,7 @@ const objSchema = mongoose.Schema(
             ref: "Rough",
             required: true,
         },
+        Id : Number,
         factory_total_carat: Number,
         // office_total_piece: Number,
         factory_assigne_name: String,
@@ -15,10 +16,16 @@ const objSchema = mongoose.Schema(
         return_date: Date,
         carat: Number,
         id: String,
+        polished : Number,
+        loseCarat : Number,
         // copyCarat: Number,
         //  total_packet: Number,
+        returnCarat : Number,
         copyCarat: Number,
         packetNo: Number,
+
+        factory_total_pcs : Number,
+        polished_pcs : Number,
        // all_process: Array,
         occupy: Boolean,
         lastCarat: Number,

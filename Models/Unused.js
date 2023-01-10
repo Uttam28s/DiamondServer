@@ -12,7 +12,7 @@ const objSchema = mongoose.Schema(
     after_sorting_carat: Number,
     before_office_carat: Number,
     after_office_carat: Number,
-    beforefactory_carat: Number,
+    before_factory_carat: Number,
     after_factory_carat: Number,
     mackable: Number,
     office_return_sorting_carat: Number,

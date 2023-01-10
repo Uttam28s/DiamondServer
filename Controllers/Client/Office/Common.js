@@ -4,6 +4,8 @@ const Office = require("../../../Models/Office");
 const Unused = require("../../../Models/Unused");
 const FactoryPacket = require("../../../Models/FactoryPacket");
 const OfficeSorting = require("../../../Models/OfficeSorting");
+const Factory = require("../../../Models/Factory");
+const Sorting = require("../../../Models/Sorting");
 
 const getList = async (req, res) => {
   // const body = req.body;
@@ -13,7 +15,7 @@ const getList = async (req, res) => {
   } else {
     const data = await Rough.find(
       {completed: false},
-      {carat: 1, _id: 1}
+      {carat: 1, _id: 1,Id:1}
     ).sort({createdAt: -1});
     // const packetSrNo = await OfficePacket.find({}, { srno: 1, _id: 1 });
     // console.log("getList -> caratList", data);
@@ -22,9 +24,17 @@ const getList = async (req, res) => {
     if (req.query["roughId"]) {
       officeId = await Office.find(
         {rough_id: roughId, returnStatus: false},
-        {office_total_carat: 1, _id: 1, copyCarat: 1}
+        {office_total_carat: 1, _id: 1, copyCarat: 1,Id : 1}
       );
     }
+    // for the Factory
+    // if (req.query["roughId"]) {
+    //   officeId = await Factory.find(
+    //     {rough_id: roughId, returnStatus: false},
+    //     {factory_total_carat: 1, _id: 1, copyCarat: 1}
+    //   );
+    // }
+
     const commonGet = {
       caratList: data,
       officeDetails: officeId,
@@ -62,7 +72,7 @@ const getOfficeSrno = async (req, res) => {
 
 
   await OfficeSorting.find().then(async(data)=>{
-    console.log('data', data)
+    // console.log('data', data)
     await data.map(async(val)=>{
      await OfficeSorting.updateOne({_id:val._id},{
        $set:{
@@ -102,6 +112,7 @@ const getOfficeSrno = async (req, res) => {
     }
   } else {
     const packetSrNo = await Office.findById({_id: roughId}, {packetNo: 1, copyCarat: 1, office_assigne_name: 1});
+    packetSrNo['packetNo'] =  packetSrNo['packetNo'] + 1
     // console.log("getList -> caratList", packetSrNo);
     try {
       // console.log("createRough -> body", body, "postsaved", postSaved);
@@ -139,8 +150,22 @@ const unusedList = async (req, res) => {
 
 };
 
+const clearDatabase = async (Req,res) =>{
+  await Rough.deleteMany()
+  await Sorting.deleteMany()
+  await Office.deleteMany()
+  await OfficePacket.deleteMany()
+  await OfficeSorting.deleteMany()
+  await Factory.deleteMany()
+  await FactoryPacket.deleteMany()
+  await Unused.deleteMany()
+  res.json({message: "Data Retrived Successfully"});
+
+}
+
 module.exports = {
   getList,
   getOfficeSrno,
-  unusedList
+  unusedList,
+  clearDatabase
 };

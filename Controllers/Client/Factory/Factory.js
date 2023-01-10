@@ -12,12 +12,14 @@ const { Promise } = require("mongoose");
 const create = async (req, res) => {
     const body = req.body;
     const id = uuidv4();
+    console.log("🚀 ~ file: Factory.js:16 ~ create ~ body.rough_id", body.rough_id)
     const unused = await Unused.findOne({rough_id: body.rough_id});
     const rough = await Rough.findOne({_id: body.rough_id});
 
     //  res.json({ msg: "passed", body, })
+    const factoryData = await Factory.find({rough_id: body.rough_id});
 
-
+    console.log("🚀 ~ file: Factory.js:34 ~ create ~ factoryPacket", factoryData?.length)
     const factoryPacket = new Factory({
         ...body,
         id,
@@ -25,7 +27,9 @@ const create = async (req, res) => {
         carat: rough.caret,
         packetNo: 0,
         copyCarat: body.factory_total_carat,
-        main_carat: rough.carat
+        main_carat: rough.carat,
+        polished: 0,
+        Id : (factoryData?.length  || 0) + 1 
       //  occupy: true,
        // lastCarat: body.factory_total_carat
     })
@@ -63,60 +67,11 @@ const create = async (req, res) => {
             res.json({message: "Database Error"});
         }
     } catch (error) {
+        console.log("🚀 ~ file: Factory.js:70 ~ create ~ error", error)
         res.json({message: error});
 
     };
 }
-
-const returnPacket = async (req, res) => {
-    const body = req.body;
-    const unused = await Unused.findOne({rough_id: body.office_id});
-    const rough = await Rough.findOne({_id: body.rough_id});
-
-    const OfficeData = await Office.findOne({rough_id: body.office_id, _id: body.rough_id})
-    const returnSorting = new OfficeSort({...body});
-    try {
-        const returnSortingPackets = await returnSorting.save();
-        console.log("createRough -> body", "postsaved", returnSortingPackets);
-        if (returnSortingPackets != null && unused) {
-            console.log('first', body.mackable, body, body.createDate)
-            await Office.updateOne(
-                {_id: body.rough_id, rough_id: body.office_id},
-                {
-                    $set: {
-                        returnStatus: true,
-                        return_date: body.createDate,
-                        mackable: body.mackable,
-                        office_return_sorting_carat: body.sumOfSortingCarat
-                    }
-                }
-            );
-
-            // await Rough.updateOne({ _id: body.rough_id },
-            //   {
-            //     $set: {
-            //       officeReturnCaret: rough.officeReturnCaret + body.mackable
-            //     }
-            //   }
-            // )
-
-            await Unused.updateOne(
-                {rough_id: body.office_id},
-                {
-                    $set: {
-                        mackable: (unused.mackable || 0) + body.mackable,
-                        office_return_sorting_carat: (unused.office_return_sorting_carat || 0) + body.sumOfSortingCarat
-                    },
-                }
-            );
-            res.json({message: "Data inserted Successfully", unused, OfficeData});
-        } else {
-            res.json({message: "Database Error"});
-        }
-    } catch (error) {
-        res.json({message: error});
-    }
-};
 
 const factoryView = async (req, res) => {
     const roughId = req.query["roughId"];
@@ -196,7 +151,41 @@ const checkReturnFactorySubPacket = async(data)=>{
     return data
 }
 
+// FactoryReturnPacket
+const returnPacket = async (req, res) => {
+    const body = req.body;
+    console.log("🚀 ~ file: Factory.js:72 ~ returnPacket ~ body", body)
+    const unused = await Unused.findOne({rough_id: body.factoryId});
+    const rough = await Rough.findOne({_id: body.rough_id});
+    console.log("🚀 ~ file: Factory.js:75 ~ returnPacket ~ rough", rough)
 
+    const OfficeData = await Factory.findOne({rough_id: body.rough_id, _id: body.factoryId})
+    console.log("🚀 ~ file: Factory.js:78 ~ returnPacket ~ OfficeData", OfficeData)
+    try {
+        await Factory.updateOne(
+            {_id: body.factoryId, rough_id: body.rough_id},
+            {
+                $set: {
+                    returnStatus: true,
+                    return_date: body.createDate,
+                }
+            }
+        );
+        console.log("🚀 ~ file: Factory.js:92 ~ returnPacket ~ Factory", Factory)
+
+        // await Rough.updateOne({ _id: body.rough_id },
+        //   {
+        //     $set: {
+        //       officeReturnCaret: rough.officeReturnCaret + body.mackable
+        //     }
+        //   }
+        // )            
+        console.log("🚀 ~ file: Factory.js:114 ~ returnPacket ~ OfficeData", OfficeData)
+        res.json({message: "Data inserted Successfully", unused, OfficeData});
+    } catch (error) {
+        res.json({message: error});
+    }
+};
 
 
 

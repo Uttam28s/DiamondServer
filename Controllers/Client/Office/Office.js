@@ -10,6 +10,7 @@ const create = async (req, res) => {
   const id = uuidv4();
   const unUsed = await Unused.findOne({rough_id: body.rough_id});
   const rough = await Rough.findOne({_id: body.rough_id});
+  const officeData = await Office.find({rough_id: body.rough_id});
   const officePacket = new Office({
     ...body,
     id,
@@ -17,6 +18,7 @@ const create = async (req, res) => {
     copyCarat: body.office_total_carat,
     carat: rough.carat,
     packetNo: 0,
+    Id :  officeData.length + 1
   });
   // console.log("create -> rough", rough);
   // if (body.office_total_carat > Unused.copyCarat) {
@@ -59,7 +61,7 @@ const create = async (req, res) => {
     console.log("createRough -> body", "postsaved", rough);
     await Rough.updateOne(
       {_id: body.rough_id},
-      {$set: {officecarat: (rough.officecarat || 0) + body.office_total_carat}}
+      {$set: {office_allocated_carat: (rough.office_allocated_carat || 0) + body.office_total_carat}}
     );
     if (postSaved != null) {
       res.json({message: "Data inserted Successfully", data: body});
@@ -73,9 +75,9 @@ const create = async (req, res) => {
 
 const returnPacket = async (req, res) => {
   const body = req.body;
-  const unused = await Unused.findOne({rough_id: body.office_id});
+  const unused = await Unused.findOne({rough_id: body.rough_id});
   const rough = await Rough.findOne({_id: body.rough_id})
-  const OfficeData = await Office.findOne({rough_id: body.office_id, _id: body.rough_id})
+  const OfficeData = await Office.findOne({rough_id: body.rough_id, _id: body.office_id})
   const returnSorting = new OfficeSort({...body});
   try {
     const returnSortingPackets = await returnSorting.save();
@@ -83,13 +85,13 @@ const returnPacket = async (req, res) => {
     if (returnSortingPackets != null && unused) {
       console.log('first', body.mackable, body, body.createDate)
       await Office.updateOne(
-        {_id: body.rough_id, rough_id: body.office_id},
+        {_id: body.office_id, rough_id: body.rough_id},
         {
           $set: {
             returnStatus: true,
             return_date: body.createDate,
             mackable: body.mackable,
-            office_return_sorting_carat: body.sumOfSortingCarat
+            office_return_sorting_carat: body.sumOfSortingCarat,
           }
         }
       );
@@ -97,20 +99,22 @@ const returnPacket = async (req, res) => {
       // await Rough.updateOne({ _id: body.rough_id },
       //   {
       //     $set: {
-      //       officeReturnCaret: rough.officeReturnCaret + body.mackable
+      //       office_returned_carat: rough.office_returned_carat + body.mackable
       //     }
       //   }
       // )
 
       await Unused.updateOne(
-        {rough_id: body.office_id},
+        {rough_id: body.rough_id},
         {
           $set: {
             mackable: (unused.mackable || 0) + body.mackable,
-            office_return_sorting_carat: (unused.office_return_sorting_carat || 0) + body.sumOfSortingCarat
+            office_return_sorting_carat: (unused.office_return_sorting_carat || 0) + body.sumOfSortingCarat,
+            after_office_carat : (unused.after_office_carat || 0) + OfficeData?.copyCarat
           },
         }
       );
+
       res.json({message: "Data inserted Successfully", unused, OfficeData});
     } else {
       res.json({message: "Database Error"});

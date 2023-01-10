@@ -8,25 +8,26 @@ const { v4: uuidv4 } = require("uuid");
 
 const create = async (req, res) => {
     const body = req.body;
+    console.log("🚀 ~ file: FactoryPacket.js:11 ~ create ~ body", body)
     const id = uuidv4();
     const process_carat_id = uuidv4()
     const factory = await Factory.findOne({ _id: body.factory_id })
     console.log('factory1111', factory, body)
     var array = []
 
-
     if (body.status == "update") {
         array = (await FactoryPacket.findOne({ _id: body.factory_id })).all_process
     }
+    console.log("🚀 ~ file: FactoryPacket.js:64 ~ create ~ body.yeild", typeof body.yeild, body.yeild)
+
     array.push(
         {
             process_name: body.process_name,
             process_carat_id: process_carat_id,
             sub_rough_id: body.factory_id,
             assign_carat: body.assign_carat,
-            returnCarat: 0,
             returnStatus: false,
-            yeild: body.yeild,
+            yeild: (Number(body.yeild)).toFixed(2),
             size: body.size,
             purity: body.purity,
             piece: body.piece,
@@ -49,24 +50,33 @@ const create = async (req, res) => {
             res.json({ msg: "updated" })
         } catch { res.json({ msg: "failed" }) }
     } else {
-
+        let factoryData = await FactoryPacket.find({ factory_id : body.factory_id })
+        
         let data = {
             id: id,
             occupy_by: body.process_name,
             last_carat: body.assign_carat,
             assign_carat: body.assign_carat,
-            main_carat: body.main_carat,
+            // main_carat: body.main_carat,
             factory_id: body.factory_id,
-            factory_carat: body.factory_carat,
+            // factory_carat: body.factory_carat,
             return: false,
+            assign_pcs : Number(body?.piece),
+            yeild: (Number(body.yeild)).toFixed(2),
+            return_carat : 0,
             assign_date: body.assign_date,
+            Id : (factoryData?.[factoryData.length - 1]?.Id || 0 ) + 1,
             all_process: array,
+            return_pcs: 0,
+            quality : body?.purity,
+            y_weight : body?.weight
         }
         try {
             await Factory.updateOne({ _id: body.factory_id }, {
                 $set: {
                     copyCarat: (factory.copyCarat || factory.factory_total_carat) - body.assign_carat,
-                }
+                },
+                $inc : { factory_total_pcs : Number(body?.piece) }
             })
             const factoryPacket = await FactoryPacket({
                 ...data
@@ -87,9 +97,8 @@ const factoryPacketView = async (req, res) => {
   try {
     const factory = await FactoryPacket.find({ factory_id: factoryId });
     const mainFactory = await Factory.find({_id:factoryId})
-    if (returnFlag) {
+    if (returnFlag === "true") {
       factory.map((d) => {
-        console.log("🚀 ~ file: FactoryPacket.js ~ line 89 ~ factoryPacketView ~ factory",mainFactory)
         if (d.occupy_by !== "false") {
           flag = false;
         }
@@ -97,21 +106,22 @@ const factoryPacketView = async (req, res) => {
       if (flag) {
         res.json({
           returnFlag: true,
-          data:mainFactory,
-          msg: "packet is not occupied by another prosecc",
+          data:factory,
+          msg: "packet is not occupied by another process",
         });
         return
       }
      else {
       res.json({
         returnFlag: false,
-        msg: "packet is occupied by another process",
+        data: factory,
+        msg: "Rough Returned",
       });
       return
     }}
-    res.json({ data: factory || [], message: "Data retirve sucess" });
+    res.json({ data: factory || [], message: "Data retrive success" });
     return
-  } catch {
+  } catch(e){
     res.json({ message: "Database error" });
   }
 };
@@ -121,22 +131,46 @@ const factoryPacketView = async (req, res) => {
 
 const factorySubPacketReturn = async (req, res) => {
     const body = req.body
+    console.log("🚀 ~ file: FactoryPacket.js:122 ~ factorySubPacketReturn ~ body", body)
     // const factory = await Factory.findOne({_id: body.factoryId})
     try {
-        const factorypacket = await FactoryPacket.updateOne(
+        const polishedData = await FactoryPacket.findOne({ _id : body?.factoryId ,"all_process.process_name": "Polish" });
+        let polishRough = 0
+        let return_date = null
+        let return_pcs = 0
+        let returnStatus = false
+        let loseCarat = 0
+        if(polishedData?.occupy_by === "Polish"){
+            polishRough = body?.returnData?.return_carat
+            returnStatus = true
+            loseCarat =  polishedData?.assign_carat - body?.returnData?.return_carat
+            return_date = body?.returnData?.return_date
+            return_pcs = body?.returnData?.return_peice
+        }
+        await FactoryPacket.updateOne(
             { "all_process.process_carat_id": body.process_carat_id },
             {
                 $set: {
                     "all_process.$.returndata": body.returnData,
                     "all_process.$.returnStatus": true,
-                    "all_process.$.returnCarat": body.returnData.return_carat,
+                    "all_process.$.returnCarat": (body.returnData.return_carat).toFixed(4),
+                    "all_process.$.returnPcs" : body.returnData.return_peice,
+                    "all_process.$.returnYield": (body.returnData.return_yeild).toFixed(4),
                     occupy_by: false,
-                    last_carat: body.returnData.return_carat
-
+                    return : returnStatus,
+                    last_carat: body.returnData.return_carat,
+                    return_date : return_date,
+                    return_pcs : return_pcs,
                 }
             }
         );
-        await Factory.updateOne({ _id: body.factoryId }, { $inc: { copyCarat: body.returnData.return_carat} })
+        if(polishedData.factory_id){
+            await Factory.updateOne({ _id: polishedData?.factory_id }, 
+                { $inc: { copyCarat: body.returnData.return_carat , polished : polishRough , returnCarat :  body?.returnData?.return_carat , loseCarat : loseCarat , polished_pcs : return_pcs},
+            })
+        }else{
+            await Factory.updateOne({ _id: body.factoryId }, { $inc: { copyCarat: body.returnData.return_carat} })
+        }
         res.json({ msg: "sucess" })
     } catch {
         res.json({ msg: "error" })
@@ -156,8 +190,116 @@ const factorySubPacketReturn = async (req, res) => {
     //     returnData: body.returnData
     // }
 }
+
+const getPacketNo = async (req, res) => {
+    try{
+        const { id } = req.query
+        const packetData = await FactoryPacket.find({ factory_id : id},{ Id : 1})
+        res.json({ packetNo : packetData[0]?.Id + 1 , message: "Fetched Successfully" });
+
+    }catch(e){
+        console.log("🚀 ~ file: FactoryPacket.js:176 ~ getPacketNo ~ e", e)
+        
+    }
+}
+
+
+const getDifference = async (req, res) => {
+    try{
+        const { type ,factory_id } = req.query
+        const packetData = await FactoryPacket.find({ factory_id : factory_id })
+        // ,"all_process.process_name": type
+        console.log("🚀 ~ file: FactoryPacket.js:208 ~ getDifference ~ packetData", packetData)
+
+        let arr =[]
+        packetData.map((ele) => {
+            ele?.all_process.map((process,index) => {
+                arr.push({
+                    process_name : process?.process_name,
+                    index : index
+                })
+            })
+        })
+
+        
+        let index = 0
+        let data= []
+        index = arr.findIndex((ele) =>{ return ele?.process_name === type})
+        if(index === 0){
+            packetData.map((ele,id) => {
+                let tempData = {
+                    id: id + 1,
+                    Id : ele?.Id,
+                    assign_pcs : ele?.assign_pcs,
+                    assign_carat : ele?.assign_carat,
+                    assign_quality : ele?.quality,
+                    carat_diff : ((ele?.assign_carat - ele?.all_process[index]?.returnCarat) || 0).toFixed(2),
+                    pcs_diff : (ele?.assign_pcs - ele?.all_process[index]?.returnPcs) || 0,
+                    yield_diff : (ele?.yeild - ele?.all_process[index]?.returnYield || 0).toFixed(2)
+                } 
+                data.push(tempData)
+            })
+        }else{
+            packetData.map((ele,id) => {
+                let tempData = {
+                    id: id + 1,
+                    Id : ele?.Id,
+                    assign_pcs :ele?.all_process[index]?.piece || 0,
+                    assign_carat : ele?.all_process[index]?.assign_carat || 0,
+                    assign_quality : ele?.quality,
+                    carat_diff : ((ele?.all_process[index]?.assign_carat - ele?.all_process[index]?.returnCarat) || 0).toFixed(2),
+                    pcs_diff : ((ele?.all_process[index]?.piece - ele?.all_process[index]?.returnPcs) || 0),
+                    yield_diff : ((ele?.all_process[index]?.yeild - ele?.all_process[index]?.returnYield) || 0).toFixed(2)
+                }
+            data.push(tempData)
+
+            })
+        }
+    
+        
+        res.json({data, message: "Fetched Successfully" });
+        
+    }catch(e){
+        console.log("🚀 ~ file: FactoryPacket.js:211 ~ getDifference ~ e", e)
+    }
+}
+
+
+
+const getPolishReportData = async (req, res) => {
+    try{
+        // let factoryId = "63b6c7eb049d6e10da107fe6"
+        const { factoryId } = req.query
+        const factoryData = await Factory.find({ returnStatus : true, _id : factoryId })
+        let data = []
+        factoryData.map((ele,index) => {
+            
+            let arr = {
+                index : index + 1,
+                Id : ele?.Id,
+                AssignPerson : ele?.factory_assigne_name,
+                K_pcs : ele?.factory_total_pcs,
+                K_cts : ele?.factory_total_carat.toFixed(2),
+                R_pcs : ele?.polished_pcs,
+                R_cts : ele?.returnCarat.toFixed(2),
+                R_percentage : ((ele?.returnCarat * 100) / ele?.factory_total_carat).toFixed(2),
+
+                // Wgt_percentage : ((100 * ele?.returnCarat) / ele?.factory_total_carat).toFixed(2)subpacket/view
+            }
+            data.push(arr)
+        })
+        console.log("🚀 ~ file: FactoryPacket.js:262 ~ factoryData.map ~ data", data)
+        res.json({ data , message: "Fetched Successfully" });
+
+    }catch(e){
+
+    } 
+}
 module.exports = {
     create,
     factoryPacketView,
     factorySubPacketReturn,
+    getPacketNo,
+    getDifference,
+    getPolishReportData
 };
