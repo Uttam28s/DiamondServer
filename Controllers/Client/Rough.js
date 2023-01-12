@@ -21,7 +21,7 @@ const create = async (req, res) => {
     const postSaved = await post.save();
     // console.log("createRough -> body", body, "postsaved", postSaved);
     if (postSaved != null) {
-      res.json({ message: "Data inserted Successfully" });
+      res.json({ message: "Rough Added Successfully" });
     } else {
       res.json({ message: "Database Error" });
     }
@@ -71,18 +71,9 @@ const viewList = async (req, res) => {
 
 const sortingCreate = async (req, res) => {
   const body = req.body;
-  console.log("sortingCreate -> body", body);
-  // const rough_id = req.query["id"];
-
   const unUsed = await Unused.findOne({ rough_id: body.rough_id });
   const rough = await Rough.findOne({ _id: body.rough_id });
-  console.log("sortingCreate -> rough", rough);
   const sortingDetails = await Sorting.findOne({ rough_id: body.rough_id });
-  console.log("sortingCreate -> sortingDetaildsfdfs", unUsed);
-
-  // const sorting = await Sorting.findOne({})
-  // console.log("sortingCreate -> data", data);
-  // date = new Date(body.date);
 
   const total_sorting_carat =
     body.chocki.chocki_carat +
@@ -97,7 +88,6 @@ const sortingCreate = async (req, res) => {
   const outTotal = body.out.out_carat * body.out.out_price;
   const total_sorting_amount =
     chockiTotal + markisTotal + crystalTotal + golTotal + outTotal;
-  // console.log("sortingCreate -> total_sorting_amount", total_sorting_amount);
 
   if (unUsed !== null) {
     console.log("sortingCreate -> unUsed", unUsed);
@@ -129,7 +119,6 @@ const sortingCreate = async (req, res) => {
 
   if (sortingDetails !== null) {
     sortingDetails.sortingData.push(body);
-    console.log("sortingCreate -> updatedSortingDetails", sortingDetails);
     const updateSortingDetails = await Sorting.updateOne(
       { rough_id: body.rough_id },
       {
@@ -143,9 +132,6 @@ const sortingCreate = async (req, res) => {
       }
     );
     try {
-      console.log("sortingCreate -> post", updateSortingDetails);
-      // const sortingSaved = await updateSortingDetails.save();
-      // console.log("createRough -> body", body, "postsaved", sortingSaved);
       if (updateSortingDetails != null) {
         res.json({
           message: "Sorting Updated Successfully",
@@ -158,7 +144,6 @@ const sortingCreate = async (req, res) => {
       res.json({ message: error });
     }
 
-    // sortingDetails.sortingData.push(data)
   } else {
     const post = new Sorting({
       rough_id: body.rough_id,
@@ -167,7 +152,6 @@ const sortingCreate = async (req, res) => {
       total_sorting_amount,
     });
     try {
-      console.log("sortingCreate -> post", post);
       const sortingSaved = await post.save();
       if (sortingSaved != null) {
         res.json({ message: "Data inserted Successfully", data: post });

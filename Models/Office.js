@@ -11,6 +11,11 @@ const objSchema = mongoose.Schema(
     office_total_carat: Number,
     office_total_piece: Number,
     office_assigne_name: String,
+    office_assigne_id : {
+      type: mongoose.ObjectId,
+      ref: "Employee",
+      required: true,
+    },
     loseCarat : Number,
     assign_date: Date,
     returnStatus: Boolean,

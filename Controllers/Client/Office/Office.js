@@ -58,13 +58,12 @@ const create = async (req, res) => {
   }
   try {
     const postSaved = await officePacket.save();
-    console.log("createRough -> body", "postsaved", rough);
     await Rough.updateOne(
       {_id: body.rough_id},
       {$set: {office_allocated_carat: (rough.office_allocated_carat || 0) + body.office_total_carat}}
     );
     if (postSaved != null) {
-      res.json({message: "Data inserted Successfully", data: body});
+      res.json({message: "Rough Assigned Successfully", data: body});
     } else {
       res.json({message: "Database Error"});
     }
@@ -115,7 +114,7 @@ const returnPacket = async (req, res) => {
         }
       );
 
-      res.json({message: "Data inserted Successfully", unused, OfficeData});
+      res.json({message: "Rough Returned Successfully", unused, OfficeData});
     } else {
       res.json({message: "Database Error"});
     }

@@ -9,9 +9,6 @@ const Office = require("../../../Models/Office");
 const {update} = require("lodash");
 const {query} = require("express");
 
-
-
-
 const mainRough = async (req, res) => {
     const { roughId } = req.body
     const rough = await Rough.findOne({_id: roughId})
@@ -26,15 +23,15 @@ const mainRough = async (req, res) => {
             await Factory.deleteMany({rough_id: roughId})
             await FactoryPacket.deleteMany({rough_id: roughId})
             await Unused.deleteMany({rough_id: roughId})
-            res.json({msg: "deleted maoin rough"})
+            res.json({message: "deleted main rough"})
             return
         } catch {
-            res.json({msg: "database errorrr"})
+            res.json({message: "database errorrr"})
             return
         }
     }
     else {
-        res.json({msg: "database Error"})
+        res.json({message: "database Error"})
     }
 }
 
@@ -43,7 +40,6 @@ const officeRough = async (req, res) => {
     const { officeId } = req.body
     const office = await Office.findOne({_id: officeId})
     try {
-        console.log("🚀 ~ file: delete.js ~ line 48 ~ officeRough ~ office", office)
         if (office) {
             try {
                 !office.returnStatus &&
@@ -58,10 +54,10 @@ const officeRough = async (req, res) => {
                 await Office.deleteOne({_id: officeId});
                 await OfficePacket.deleteMany({office_id: officeId});
                 await OfficeSorting.deleteMany({office_id: officeId});
-                res.json({msg: `office rough  deleted"}`})
+                res.json({message: `office rough  deleted"}`})
                 return
             } catch {
-                res.json({msg: "database error"})
+                res.json({message: "database error"})
                 return
             }
         }
@@ -71,14 +67,9 @@ const officeRough = async (req, res) => {
     }
 }
 
-
-
-
 const factoryRough = async (req, res) => {
     const {factoryId} = req.body
-    console.log("🚀 ~ file: delete.js:79 ~ factoryRough ~ factoryId", factoryId)
     const factory = await Factory.findOne({_id: factoryId})
-    console.log("🚀 ~ file: delete.js:81 ~ factoryRough ~ factory", factory)
 
     try {
         if (factory) {
@@ -88,7 +79,7 @@ const factoryRough = async (req, res) => {
             )
             await Factory.deleteOne({_id: factoryId});
             await FactoryPacket.deleteMany({factory_id: factoryId});
-            res.json({msg: "FActory rough deleted"})
+            res.json({message: "FActory rough deleted"})
             return
         }
     } catch {
@@ -109,14 +100,12 @@ const officeSubPacket = async (req, res) => {
         )
 
         await OfficePacket.deleteOne({_id: officePacketId})
-        res.json({msg: "subPacket deleted"})
+        res.json({message: "subPacket deleted"})
     } catch {
-        res.json({msg: "database error"})
+        res.json({message: "database error"})
 
     }
 }
-
-
 
 const factorySubPacket = async (req, res) => {
 
@@ -137,7 +126,6 @@ const factorySubPacket = async (req, res) => {
 
 }
 
-
 const factorySubProcessPacket = async (req, res) => {
     //const subPacketId = req.query["subpacketid"]
     // const subProcessId = req.query["subProcessid"]
@@ -146,15 +134,6 @@ const factorySubProcessPacket = async (req, res) => {
     // const subProcess = subPacket.all_process.filter((data) => data.process_carat_id !== subProcessId)
 
 }
-
-
-
-
-
-
-
-
-
 
 module.exports = {
     mainRough,

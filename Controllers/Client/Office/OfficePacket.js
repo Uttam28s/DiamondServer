@@ -15,15 +15,6 @@ const create = async (req, res) => {
   const officeOnePacket = await OfficePacket.findOne({
     _id: body.packet_id,
   });
-  // const officePacketAll = await OfficePacket.find();
-  // console.log(
-  //   "create -> officePacketAll",
-  //   officePacketAll,
-  //   "------->",
-  //   officePacketAll.length + 2
-  // );
-
-  // console.log("create -> office", office);
 
   if (body.packet_status === "sawing") {
     if (body.return === true) {
@@ -55,7 +46,7 @@ const create = async (req, res) => {
                 $inc : { loseCarat : body.difference || officeOnePacket.sawing_issueCarat - body.returnCarat }
               }
             );
-            res.json({ message: "Data Updates Successfully" });
+            res.json({ message: "Office SubPacket Returned Successfully" });
           } catch (error) {
             res.json({ message: error });
           }
@@ -70,7 +61,7 @@ const create = async (req, res) => {
         id,
         office_id: body.office_id,
         type: "sawing",
-        sawing_manager_name: body.manager_name || "noName",
+        sawing_assigne_name: body.assigne_name || "noName",
         sawing_issueCarat: body.issueCarat || 0.0,
         sawing_issuePcs: body.issuePcs || 0.0,
         return: body.return || false,
@@ -107,7 +98,7 @@ const create = async (req, res) => {
           } catch (error) {
             res.json({ message: error });
           }
-          res.json({ message: "Data inserted Successfully", data: body });
+          res.json({ message: "Office Sub Packet Created Successfully", data: body });
         } else {
           res.json({ message: "Database Error" });
         }
@@ -147,7 +138,7 @@ const create = async (req, res) => {
                 $inc : { loseCarat : body.difference || officeOnePacket.chapka_issueCarat - body.returnCarat }
               }
             );
-            res.json({ message: "Data Updates Successfully" });
+            res.json({ message: "Office SubPacket Returned Successfully" });
           } catch (error) {
             res.json({ message: error });
           }
@@ -162,7 +153,7 @@ const create = async (req, res) => {
         id,
         office_id: body.office_id,
         type: "chapka",
-        chapka_manager_name: body.manager_name || "noName",
+        chapka_assigne_name: body.assigne_name || "noName",
         chapka_issueCarat: body.issueCarat || 0.0,
         chapka_issuePcs: body.issuePcs || 0.0,
         return: body.return || false,
@@ -199,7 +190,7 @@ const create = async (req, res) => {
           } catch (error) {
             res.json({ message: error });
           }
-          res.json({ message: "Data inserted Successfully", data: body });
+          res.json({ message: "Office Sub Packet Created Successfully", data: body });
         } else {
           res.json({ message: "Database Error" });
         }

@@ -8,17 +8,14 @@ const { v4: uuidv4 } = require("uuid");
 
 const create = async (req, res) => {
     const body = req.body;
-    console.log("🚀 ~ file: FactoryPacket.js:11 ~ create ~ body", body)
     const id = uuidv4();
     const process_carat_id = uuidv4()
     const factory = await Factory.findOne({ _id: body.factory_id })
-    console.log('factory1111', factory, body)
     var array = []
-
+    try{
     if (body.status == "update") {
         array = (await FactoryPacket.findOne({ _id: body.factory_id })).all_process
     }
-    console.log("🚀 ~ file: FactoryPacket.js:64 ~ create ~ body.yeild", typeof body.yeild, body.yeild)
 
     array.push(
         {
@@ -39,7 +36,8 @@ const create = async (req, res) => {
             await FactoryPacket.updateOne({ _id: body.factory_id }, {
                 $set: {
                     all_process: array,
-                    occupy_by: body.process_name
+                    occupy_by: body.process_name,
+                    // purity : body.purity 
                 }
             })
             await Factory.updateOne({ _id: body.factory_id },{
@@ -47,8 +45,8 @@ const create = async (req, res) => {
                     occupy_by: body.process_name
                 }
             })
-            res.json({ msg: "updated" })
-        } catch { res.json({ msg: "failed" }) }
+            res.json({ message: "Factory Packet Assigned SuccessFully" })
+        } catch { res.json({ message: "failed" }) }
     } else {
         let factoryData = await FactoryPacket.find({ factory_id : body.factory_id })
         
@@ -86,8 +84,12 @@ const create = async (req, res) => {
         catch {
             console.log('err')
         }
-        res.json({ data: data })
+        res.json({ data: data, message : "Factory packet Created" })
     }
+}catch(e){
+    res.json({ message: e })
+  
+}
 };
 
 const factoryPacketView = async (req, res) => {
@@ -96,7 +98,6 @@ const factoryPacketView = async (req, res) => {
   let flag = true;
   try {
     const factory = await FactoryPacket.find({ factory_id: factoryId });
-    const mainFactory = await Factory.find({_id:factoryId})
     if (returnFlag === "true") {
       factory.map((d) => {
         if (d.occupy_by !== "false") {
@@ -107,7 +108,7 @@ const factoryPacketView = async (req, res) => {
         res.json({
           returnFlag: true,
           data:factory,
-          msg: "packet is not occupied by another process",
+          message: "packet is not occupied by another process",
         });
         return
       }
@@ -115,7 +116,7 @@ const factoryPacketView = async (req, res) => {
       res.json({
         returnFlag: false,
         data: factory,
-        msg: "Rough Returned",
+        message: "Rough Returned",
       });
       return
     }}
@@ -131,7 +132,6 @@ const factoryPacketView = async (req, res) => {
 
 const factorySubPacketReturn = async (req, res) => {
     const body = req.body
-    console.log("🚀 ~ file: FactoryPacket.js:122 ~ factorySubPacketReturn ~ body", body)
     // const factory = await Factory.findOne({_id: body.factoryId})
     try {
         const polishedData = await FactoryPacket.findOne({ _id : body?.factoryId ,"all_process.process_name": "Polish" });
@@ -171,9 +171,10 @@ const factorySubPacketReturn = async (req, res) => {
         }else{
             await Factory.updateOne({ _id: body.factoryId }, { $inc: { copyCarat: body.returnData.return_carat} })
         }
-        res.json({ msg: "sucess" })
-    } catch {
-        res.json({ msg: "error" })
+        res.json({ message: "Factory Packet Returned Successfully" })
+    } catch(e){
+        console.log("🚀 ~ file: FactoryPacket.js:176 ~ factorySubPacketReturn ~ e", e)
+        res.json({ message: "error" })
     }
     // await FactoryPacket.updateOne({_id: body.factoryId}, {
     //     $set: {
@@ -181,7 +182,6 @@ const factorySubPacketReturn = async (req, res) => {
     //         lastCarat: body.returnData.return_carat
     //     }
     // })
-    console.log('req.body', req.body)
     // const indx = factory[0].all_process.indexOf((data) => data.process_carat_id == body.process_carat_id)
     // const processArray = factory[0].all_process.filter((data) => data.id == body.process_carat_id)
     // let returnSubPacket = {
@@ -208,9 +208,6 @@ const getDifference = async (req, res) => {
     try{
         const { type ,factory_id } = req.query
         const packetData = await FactoryPacket.find({ factory_id : factory_id })
-        // ,"all_process.process_name": type
-        console.log("🚀 ~ file: FactoryPacket.js:208 ~ getDifference ~ packetData", packetData)
-
         let arr =[]
         packetData.map((ele) => {
             ele?.all_process.map((process,index) => {
@@ -268,7 +265,6 @@ const getDifference = async (req, res) => {
 
 const getPolishReportData = async (req, res) => {
     try{
-        // let factoryId = "63b6c7eb049d6e10da107fe6"
         const { factoryId } = req.query
         const factoryData = await Factory.find({ returnStatus : true, _id : factoryId })
         let data = []

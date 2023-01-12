@@ -88,13 +88,13 @@ const editOfficeSubPacket = async (req, res) => {
             body.sawing ? {
                 sawing_issueCarat: officePacket.sawing_issueCarat + (body.difference || 0),
                 sawing_issuePcs: officePacket.sawing_issuePcs + (body.pcs_difference || 0),
-                sawing_manager_name: body.manager_name || officePacket.sawing_manager_name,
+                sawing_assigne_name: body.manager_name || officePacket.sawing_assigne_name,
                 sawing_assign_date: body.assign_date || officePacket.sawing_assign_date,
             } :
                 {
                     chapka_issueCarat: officePacket.chapka_issueCarat + (body.difference || 0),
                     chapka_issuePcs: officePacket.chapka_issuePcs + (body.pcs_difference || 0),
-                    chapka_manager_name: body.manager_name || officePacket.chapka_manager_name,
+                    chapka_assigne_name: body.manager_name || officePacket.chapka_assigne_name,
                     chapka_assign_date: body.assign_date || officePacket.chapka_assign_date,
                 }
         if (body.return) {

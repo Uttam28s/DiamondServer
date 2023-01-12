@@ -4,5 +4,6 @@ module.exports = {
   commonRoutes: require("./common"),
   factoryRoutes: require("./factory"),
   deleteRoutes: require("./delete"),
-  editRoutes: require("./edit")
+  editRoutes: require("./edit"),
+  employeeRoutes: require("./employee")
 };

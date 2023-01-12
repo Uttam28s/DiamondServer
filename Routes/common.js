@@ -8,7 +8,12 @@ router.get("/getList", controller.commonController.getList);
 router.get("/getOfficeSrNo", controller.commonController.getOfficeSrno);
 router.get("/unused", controller.commonController.unusedList);
 
-router.get("/delete",controller.commonController.clearDatabase)
+router.get("/delete",controller.commonController.clearDatabase);
+
+router.post("/addEmployeetype",controller.commonController.addEmployeeType);
+router.get("/getEmployeeType",controller.commonController.getEmployeeType);
+router.post("/addPuritytype",controller.commonController.addPurityType);
+router.get("/getPurityType",controller.commonController.getPurityType)
 // router.post('/register-verify', controller.AuthController.verifyRegister);
 // router.post('/login', controller.AuthController.login);
 // router.post('/social-login', controller.AuthController.socialLogin);

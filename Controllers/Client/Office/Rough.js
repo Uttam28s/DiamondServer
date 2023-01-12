@@ -22,7 +22,6 @@ const create = async (req, res) => {
     rough_total: req.body.carat * req.body.rate,
     Id: Number(roughData?.[roughData.length - 1]?.Id || 0 ) + 1
   });
-  console.log("🚀 ~ file: Rough.js:26 ~ create ~ post", post)
 
   try {
     const postSaved = await post.save();
@@ -34,7 +33,7 @@ const create = async (req, res) => {
      })
      unused.save()
     if (postSaved != null) {
-      res.json({ message: "Data inserted Successfully" });
+      res.json({ message: "Rough Created Successfully" });
     } else {
       res.json({ message: "Database Error" });
     }
@@ -217,12 +216,9 @@ const sortingList = async (req, res) => {
 
 const getPolishedRough = async (req, res) => {
   const { roughId } = req.query
-  console.log("🚀 ~ file: Rough.js:220 ~ getPolishedRough ~ roughId", roughId)
   const factoryIds = await Factory.find({ rough_id : roughId })
-  console.log("🚀 ~ file: Rough.js:221 ~ getPolishedRough ~ factoryIds ", factoryIds)
   let data = []
   factoryIds.map((ele) => {
-    console.log("🚀 ~ file: Rough.js:226 ~ factoryIds.map ~ ele?.polished + ele?.loseCarat === ele?.factory_total_carat", ele?.polished + ele?.loseCarat , ele?.factory_total_carat)
     if(ele?.polished + ele?.loseCarat === ele?.factory_total_carat){
       data.push({
         factory_total_carat : ele?.factory_total_carat,
@@ -231,7 +227,6 @@ const getPolishedRough = async (req, res) => {
       })
     }
   })
-  console.log("🚀 ~ file: Rough.js:230 ~ factoryIds.map ~ data", data)
 
   res.json({ data,  message: "Data retrive Successfully" });
 

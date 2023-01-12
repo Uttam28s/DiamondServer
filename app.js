@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const env = require("dotenv").config().parsed;
 const passport = require("passport");
-const {roughRoutes, officeRoutes, commonRoutes, factoryRoutes, deleteRoutes, editRoutes} = require("./Routes/index");
+const {roughRoutes, officeRoutes, commonRoutes, factoryRoutes, deleteRoutes, editRoutes, employeeRoutes} = require("./Routes/index");
 const port = process.env.PORT  || 3003;
 const cors = require("cors");
 
@@ -48,6 +48,7 @@ app.use("/api/factory", factoryRoutes);
 app.use("/api/delete", deleteRoutes)
 app.use("/api/edit", editRoutes)
 
+app.use("/api/employee", employeeRoutes)
 app.use(passport.initialize());
 app.use(passport.session());
 

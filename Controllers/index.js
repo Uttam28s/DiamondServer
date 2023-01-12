@@ -7,7 +7,7 @@ module.exports = {
   factoryCreate: require("./Client/Factory/Factory"),
   factoryCreatePacket: require("./Client/Factory/FactoryPacket"),
   deleteModel: require('./Client/Modification/delete'),
-  editModel: require('./Client/Modification/Edit')
-
+  editModel: require('./Client/Modification/Edit'),
+  employeeModel: require('./Client/Employee/Employee')
 
 };
