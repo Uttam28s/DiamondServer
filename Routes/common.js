@@ -13,7 +13,9 @@ router.get("/delete",controller.commonController.clearDatabase);
 router.post("/addEmployeetype",controller.commonController.addEmployeeType);
 router.get("/getEmployeeType",controller.commonController.getEmployeeType);
 router.post("/addPuritytype",controller.commonController.addPurityType);
-router.get("/getPurityType",controller.commonController.getPurityType)
+router.get("/getPurityType",controller.commonController.getPurityType);
+router.post("/addfactoryProcessType",controller.commonController.addfactoryProcessType);
+router.get("/getfactoryProcessType",controller.commonController.getfactoryProcessType)
 // router.post('/register-verify', controller.AuthController.verifyRegister);
 // router.post('/login', controller.AuthController.login);
 // router.post('/social-login', controller.AuthController.socialLogin);

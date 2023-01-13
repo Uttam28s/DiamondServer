@@ -6,7 +6,6 @@ const {v4: uuidv4} = require("uuid");
 
 const create = async (req, res) => {
   const body = req.body;
-  // console.log("create -> body", body);
   const id = uuidv4();
   const unUsed = await Unused.findOne({rough_id: body.rough_id});
   const rough = await Rough.findOne({_id: body.rough_id});
@@ -20,7 +19,6 @@ const create = async (req, res) => {
     packetNo: 0,
     Id :  officeData.length + 1
   });
-  // console.log("create -> rough", rough);
   // if (body.office_total_carat > Unused.copyCarat) {
   //   res
   //     .status(400)
@@ -80,9 +78,7 @@ const returnPacket = async (req, res) => {
   const returnSorting = new OfficeSort({...body});
   try {
     const returnSortingPackets = await returnSorting.save();
-    console.log("createRough -> body", "postsaved", returnSortingPackets, body);
     if (returnSortingPackets != null && unused) {
-      console.log('first', body.mackable, body, body.createDate)
       await Office.updateOne(
         {_id: body.office_id, rough_id: body.rough_id},
         {
@@ -127,14 +123,12 @@ const officeView = async (req, res) => {
   const roughId = req.query["roughId"];
   const officeID = req.query["officeID"];
   // const officePacket = OfficePackets.find({off})
-  console.log("viewList -> data", roughId, officeID);
 
   if (officeID || roughId) {
 
     const data = await Office.find(roughId ? {rough_id: roughId} : {_id: officeID});
       
     try {
-      // console.log("createRough -> body", body, "postsaved", postSaved);
       if (data != null) {
         res.json({data, message: "Data retrive Successfully"});
       } else {

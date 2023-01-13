@@ -7,10 +7,8 @@ const { v4: uuidv4 } = require("uuid");
 
 const create = async (req, res) => {
   const body = req.body;
-  // console.log("create -> body", body);
   const id = uuidv4();
   const office = await Office.findOne({ _id: body.office_id });
-  // console.log("create -> office", office);
 
   const officeOnePacket = await OfficePacket.findOne({
     _id: body.packet_id,
@@ -75,15 +73,12 @@ const create = async (req, res) => {
         carat: body.carat || 0,
         packet_status: "Sawing Issue",
       };
-      // console.log("create -> data", data);
 
       const officePacket = new OfficePacket({
         ...data,
       });
-      // console.log("create -> officePacket", officePacket);
       try {
         const postSaved = await officePacket.save();
-        // console.log("createRough -> body", body, "postsaved", postSaved);
         if (postSaved != null) {
           try {
             await Office.updateOne(
@@ -126,7 +121,6 @@ const create = async (req, res) => {
             },
           }
         );
-        // console.log("create -> chapkaDataUpdate", chapkaDataUpdate);
         if (chapkaDataUpdate !== null) {
           try {
             await Office.updateOne(
@@ -167,15 +161,12 @@ const create = async (req, res) => {
         carat: body.carat || 0,
         packet_status: "Chapka Issue",
       };
-      // console.log("create -> data", data);
 
       const officePacket = new OfficePacket({
         ...data,
       });
-      // console.log("create -> officePacket", officePacket);
       try {
         const postSaved = await officePacket.save();
-        // console.log("createRough -> body", body, "postsaved", postSaved);
         if (postSaved != null) {
           try {
             await Office.updateOne(
@@ -210,7 +201,6 @@ const officePacketView = async (req, res) => {
   if (officeID && checkStatus) {
     const packetdetail = await OfficePacket.find({ office_id: officeID });
     const OfficeRough = await Office.find({ _id: officeID })
-    console.log("officeView -> body a", OfficeRough, officeID, packetDetails, body);
     let flag = { msg: "All Packet Is Returned ", returned: true }
     packetdetail.map((data) => {
       if (data.packet_status.includes("Issue")) {
@@ -229,7 +219,6 @@ const officePacketView = async (req, res) => {
   if (packetDetails) {
     const packetdetail = await OfficePacket.findOne({ _id: packetDetails });
     try {
-      // console.log("createRough -> body", body, "postsaved", postSaved);
       if (packetdetail != null) {
         res.json({
           packetdetail,
@@ -252,7 +241,6 @@ const officePacketView = async (req, res) => {
         office_id: body,
       });
       try {
-        // console.log("createRough -> body", body, "postsaved", postSaved);
         if (data != null) {
           res.json({
             count: totalData.length,
@@ -275,7 +263,6 @@ const officePacketView = async (req, res) => {
         office_id: body,
       });
       try {
-        // console.log("createRough -> body", body, "postsaved", postSaved);
         if (data != null) {
           res.json({
             count: totalData.length,

@@ -4,21 +4,23 @@ const mongoose = require("mongoose");
 
 
 const EmployeeTypeDetails = new mongoose.Schema({
-    name: {
-        type: String,
-    },
+    name: String
 });
-
 
 const purityTypeDetails = new mongoose.Schema({
     purity : String
 });
 
+const factoryProcessType = new mongoose.Schema({
+    process : String
+})
+
 const objSchema = mongoose.Schema(
     {
 
             type: [EmployeeTypeDetails],
-            purityType : [purityTypeDetails]
+            purityType : [purityTypeDetails],
+            factoryProcessType : [factoryProcessType]
     },
     {
         timestamps: true,

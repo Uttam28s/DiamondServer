@@ -19,7 +19,6 @@ const getList = async (req, res) => {
       { carat: 1, _id: 1, Id: 1 }
     ).sort({ createdAt: -1 });
     // const packetSrNo = await OfficePacket.find({}, { srno: 1, _id: 1 });
-    // console.log("getList -> caratList", data);
     let officeId = [];
 
     if (req.query["roughId"]) {
@@ -41,7 +40,6 @@ const getList = async (req, res) => {
       officeDetails: officeId,
     };
     try {
-      // console.log("createRough -> body", body, "postsaved", postSaved);
       if (commonGet != null) {
         res.json({ commonGet, message: "Data inserted Successfully" });
       } else {
@@ -57,7 +55,6 @@ const getOfficeSrno = async (req, res) => {
   //await FactoryPacket.find().then((d)=>{
 
   //   d.map(async(c,i)=>{
-  //     console.log("🚀 ~ file: Common.js ~ line 52 ~ awaitFactoryPacket.find ~ d", d)
   //    await FactoryPacket.updateOne({id:c.id},{
   //       $set:{
   //         srno:i+1
@@ -68,7 +65,6 @@ const getOfficeSrno = async (req, res) => {
   // })
 
   await OfficeSorting.find().then(async (data) => {
-    // console.log('data', data)
     await data.map(async (val) => {
       await OfficeSorting.updateOne(
         { _id: val._id },
@@ -85,7 +81,6 @@ const getOfficeSrno = async (req, res) => {
   // const body = req.body;
   const roughId = req.query["officeId"];
   const srno = req.query["srno"];
-  // console.log('roughId', roughId, srno)
   if (roughId === 0) {
     res.json({ message: " no office data available" });
   } else if (srno) {
@@ -93,9 +88,7 @@ const getOfficeSrno = async (req, res) => {
       office_id: roughId,
       return: false,
     });
-    //; console.log("getList -> caratList", packetSrNo);
     try {
-      // console.log("createRough -> body", body, "postsaved", postSaved);
       if (packetSrNo != null) {
         res.json({ packetSrNo, message: "Data inserted Successfully" });
       } else {
@@ -110,9 +103,7 @@ const getOfficeSrno = async (req, res) => {
       { packetNo: 1, copyCarat: 1, office_assigne_name: 1 }
     );
     packetSrNo["packetNo"] = packetSrNo["packetNo"] + 1;
-    // console.log("getList -> caratList", packetSrNo);
     try {
-      // console.log("createRough -> body", body, "postsaved", postSaved);
       if (packetSrNo != null) {
         res.json({ packetSrNo, message: "Data inserted Successfully" });
       } else {
@@ -126,12 +117,10 @@ const getOfficeSrno = async (req, res) => {
 
 const unusedList = async (req, res) => {
   const roughId = req.query["roughId"];
-  console.log("🚀 ~ file: Common.js ~ line 84 ~ unusedList ~ roughId", roughId);
   if (roughId && roughId === 0) {
     res.json({ message: " no office data available" });
   } else {
     const data = await Unused.findOne({ rough_id: roughId });
-    console.log("roughIdaaaa", roughId, data);
     try {
       if (data != null) {
         res.json({ data, message: "Data Retrived Successfully" });
@@ -161,7 +150,7 @@ const addEmployeeType = async (req, res) => {
     const { name } = req.body;
     let CommonObj = await Common.findOne();
     CommonObj?.type.map((ele) => {
-      if(ele.name === name){
+      if(ele.name?.toLowerCase() === name?.toLowerCase()){
         res.status(400).json({ message: "Type Already Occupied" });
       }
     })
@@ -178,19 +167,18 @@ const addEmployeeType = async (req, res) => {
     );
     res.json({ message: "Updated Successfully" });
   } catch (e) {
-    console.log("🚀 ~ file: Common.js:171 ~ addEmployeeType ~ e", e);
+    res.status(400).json({ message: "Something wENT wRONG" });
   }
 };
 
 const getEmployeeType = async (req,res) => {
   try{
     let data = await Common.findOne()
-    console.log("🚀 ~ file: Common.js:188 ~ getEmployeeType ~ data", data)
     let type = data.type
     res.json({ type ,message: "Updated Successfully" });
 
   }catch(e){
-    console.log("🚀 ~ file: Common.js:171 ~ addEmployeeType ~ e", e);
+    res.status(400).json({ message: "Something wENT wRONG" });
   }
 }
 
@@ -200,7 +188,7 @@ const addPurityType = async (req, res) => {
     const { purity } = req.body;
     let CommonObj = await Common.findOne();
     CommonObj?.purityType.map((ele) => {
-      if(ele.purity === purity){
+      if(ele.purity?.toLowerCase() === purity?.toLowerCase()){
         res.status(400).json({ message: "Type Already Occupied" });
       }
     })
@@ -232,6 +220,44 @@ const getPurityType = async (req,res) => {
   }
 }
 
+
+const addfactoryProcessType = async (req, res) => {
+  try {
+    const { process } = req.body;
+    let CommonObj = await Common.findOne();
+    CommonObj?.factoryProcessType.map((ele) => {
+      if(ele.process?.toLowerCase() === process?.toLowerCase()){
+        res.status(400).json({ message: "Type Already Occupied" });
+      }
+    })
+    let type = CommonObj.factoryProcessType || [];
+    type.push({ process: process });
+    await Common.findOneAndUpdate(
+      { _id: CommonObj._id },
+      {
+        $set: {
+          factoryProcessType: type,
+        },
+      },
+      { new: true }
+    );
+    res.json({ message: "Updated Successfully" });
+  } catch (e) {
+    res.status(400).json({ message: "Type Already Occupied" });
+  }
+};
+
+const getfactoryProcessType = async (req,res) => {
+  try{
+    let CommonData = await Common.findOne()
+    let data = CommonData.factoryProcessType
+    res.json({ data ,message: "Updated Successfully" });
+
+  }catch(e){
+    res.status(400).json({ message: "Something Went Wrong" });
+  }
+}
+
 module.exports = {
   getList,
   getOfficeSrno,
@@ -240,5 +266,8 @@ module.exports = {
   addEmployeeType,
   getEmployeeType,
   addPurityType,
-  getPurityType
+  getPurityType,
+
+  addfactoryProcessType,
+  getfactoryProcessType
 };

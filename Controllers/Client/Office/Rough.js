@@ -10,10 +10,6 @@ const create = async (req, res) => {
 
   const completed = req.body.completed || 0;
   const id = uuidv4();
-  // date = new Date(body.date);
-  // const days = Number(body.days);
-  // var lastdate = new Date(body.date);
-  // lastdate.setDate(lastdate.getDate() + days);
   const roughData = await Rough.find()
   const post = new Rough({
     ...body,
@@ -46,9 +42,7 @@ const viewList = async (req, res) => {
   const body = req.query["id"];
   if (body) {
     const data = await Rough.find({ _id: body });
-    // console.log("viewList -> data", data);
     try {
-      // console.log("createRough -> body", body, "postsaved", postSaved);
       if (data != null) {
         res.json({ data, message: "Data retrive Successfully" });
       } else {
@@ -63,11 +57,9 @@ const viewList = async (req, res) => {
       .skip(parseInt(req.query["skip"]))
       .limit(parseInt(req.query["limit"]))
       .sort({ createdAt: -1 });
-    console.log("viewLissat -> body", data.length, req.query);
 
     const totalData = await Rough.find();
     try {
-      // console.log("createRough -> body", body, "postsaved", postSaved);
       if (data != null) {
         res.json({
           count: totalData.length,
@@ -85,17 +77,13 @@ const viewList = async (req, res) => {
 
 const sortingCreate = async (req, res) => {
   const body = req.body;
-  console.log("sortingCreate -> body", body);
   // const rough_id = req.query["id"];
 
   const unUsed = await Unused.findOne({ rough_id: body.rough_id });
   const rough = await Rough.findOne({ _id: body.rough_id });
-  console.log("sortingCreate -> rough", rough);
   const sortingDetails = await Sorting.findOne({ rough_id: body.rough_id });
-  console.log("sortingCreate -> sortingDetaildsfdfs", unUsed);
 
   // const sorting = await Sorting.findOne({})
-  // console.log("sortingCreate -> data", data);
   // date = new Date(body.date);
 
   const total_sorting_carat =
@@ -111,10 +99,8 @@ const sortingCreate = async (req, res) => {
   const outTotal = body.out.out_carat * body.out.out_price;
   const total_sorting_amount =
     chockiTotal + markisTotal + crystalTotal + golTotal + outTotal;
-  // console.log("sortingCreate -> total_sorting_amount", total_sorting_amount);
 
   if (unUsed !== null) {
-    console.log("sortingCreate -> unUsed", unUsed);
     try {
       await Unused.updateOne(
         { rough_id: body.rough_id },
@@ -144,7 +130,6 @@ const sortingCreate = async (req, res) => {
 
   if (sortingDetails !== null) {
     sortingDetails.sortingData.push(body);
-    console.log("sortingCreate -> updatedSortingDetails", sortingDetails);
     const updateSortingDetails = await Sorting.updateOne(
       { rough_id: body.rough_id },
       {
@@ -158,9 +143,6 @@ const sortingCreate = async (req, res) => {
       }
     );
     try {
-      console.log("sortingCreate -> post", updateSortingDetails);
-      // const sortingSaved = await updateSortingDetails.save();
-      // console.log("createRough -> body", body, "postsaved", sortingSaved);
       if (updateSortingDetails != null) {
         res.json({
           message: "Sorting Updated Successfully",
@@ -182,9 +164,7 @@ const sortingCreate = async (req, res) => {
       total_sorting_amount,
     });
     try {
-      console.log("sortingCreate -> post", post);
       const sortingSaved = await post.save();
-      // console.log("createRough -> body", body, "postsaved", sortingSaved);
       if (sortingSaved != null) {
         res.json({ message: "Data inserted Successfully", data: post });
       } else {
@@ -198,11 +178,8 @@ const sortingCreate = async (req, res) => {
 
 const sortingList = async (req, res) => {
   const body = req.query["id"];
-  // console.log("viewLissat -> body", body);
   const data = await Sorting.find({ id: body });
-  console.log("viewList -> data", data);
   try {
-    // console.log("createRough -> body", body, "postsaved", postSaved);
     if (data != null) {
       res.json({ data, message: "Data retrive Successfully" });
     } else {
