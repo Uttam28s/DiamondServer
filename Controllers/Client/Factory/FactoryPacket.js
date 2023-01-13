@@ -10,69 +10,69 @@ const create = async (req, res) => {
     const body = req.body;
     const id = uuidv4();
     const process_carat_id = uuidv4()
-    const factory = await Factory.findOne({ _id: body.factory_id })
+    const factory = await Factory.findOne({ _id: body?.factory_id })
     var array = []
     try{
-    if (body.status == "update") {
-        array = (await FactoryPacket.findOne({ _id: body.factory_id })).all_process
+    if (body?.status == "update") {
+        array = (await FactoryPacket.findOne({ _id: body?.factory_id }))?.all_process
     }
 
     array.push(
         {
-            process_name: body.process_name,
+            process_name: body?.process_name,
             process_carat_id: process_carat_id,
-            sub_rough_id: body.factory_id,
-            assign_carat: body.assign_carat,
+            sub_rough_id: body?.factory_id,
+            assign_carat: body?.assign_carat,
             returnStatus: false,
-            yeild: (Number(body.yeild)).toFixed(2),
-            size: body.size,
-            purity: body.purity,
-            piece: body.piece,
-            assign_date: body.assign_date,
-            assign_name: body.assign_name,
+            yeild: (Number(body?.yeild)).toFixed(2),
+            size: body?.size,
+            purity: body?.purity,
+            piece: body?.piece,
+            assign_date: body?.assign_date,
+            assign_name: body?.assign_name,
         })
     if (body.status == "update") {
         try {
             await FactoryPacket.updateOne({ _id: body.factory_id }, {
                 $set: {
                     all_process: array,
-                    occupy_by: body.process_name,
+                    occupy_by: body?.process_name,
                     // purity : body.purity 
                 }
             })
-            await Factory.updateOne({ _id: body.factory_id },{
+            await Factory.updateOne({ _id: body?.factory_id },{
                 $set:{
-                    occupy_by: body.process_name
+                    occupy_by: body?.process_name
                 }
             })
             res.json({ message: "Factory Packet Assigned SuccessFully" })
         } catch { res.json({ message: "failed" }) }
     } else {
-        let factoryData = await FactoryPacket.find({ factory_id : body.factory_id })
+        let factoryData = await FactoryPacket.find({ factory_id : body?.factory_id })
         
         let data = {
             id: id,
-            occupy_by: body.process_name,
-            last_carat: body.assign_carat,
-            assign_carat: body.assign_carat,
+            occupy_by: body?.process_name,
+            last_carat: body?.assign_carat,
+            assign_carat: body?.assign_carat,
             // main_carat: body.main_carat,
-            factory_id: body.factory_id,
+            factory_id: body?.factory_id,
             // factory_carat: body.factory_carat,
             return: false,
             assign_pcs : Number(body?.piece),
-            yeild: (Number(body.yeild)).toFixed(2),
+            yeild: (Number(body?.yeild)).toFixed(2),
             return_carat : 0,
-            assign_date: body.assign_date,
-            Id : (factoryData?.[factoryData.length - 1]?.Id || 0 ) + 1,
+            assign_date: body?.assign_date,
+            Id : (factoryData?.[factoryData?.length - 1]?.Id || 0 ) + 1,
             all_process: array,
             return_pcs: 0,
             quality : body?.purity,
             y_weight : body?.weight
         }
         try {
-            await Factory.updateOne({ _id: body.factory_id }, {
+            await Factory.updateOne({ _id: body?.factory_id }, {
                 $set: {
-                    copyCarat: (factory.copyCarat || factory.factory_total_carat) - body.assign_carat,
+                    copyCarat: (factory?.copyCarat || factory?.factory_total_carat) - body?.assign_carat,
                 },
                 $inc : { factory_total_pcs : Number(body?.piece) }
             })
@@ -87,6 +87,7 @@ const create = async (req, res) => {
         res.json({ data: data, message : "Factory packet Created" })
     }
 }catch(e){
+    console.log("🚀 ~ file: FactoryPacket.js:90 ~ create ~ e", e)
     res.json({ message: e })
   
 }
@@ -147,24 +148,27 @@ const factorySubPacketReturn = async (req, res) => {
             return_date = body?.returnData?.return_date
             return_pcs = body?.returnData?.return_peice
         }
+        console.log("Part 1")
         await FactoryPacket.updateOne(
             { "all_process.process_carat_id": body.process_carat_id },
             {
                 $set: {
-                    "all_process.$.returndata": body.returnData,
+                    "all_process.$.returndata": body?.returnData,
                     "all_process.$.returnStatus": true,
-                    "all_process.$.returnCarat": (body.returnData.return_carat).toFixed(4),
-                    "all_process.$.returnPcs" : body.returnData.return_peice,
-                    "all_process.$.returnYield": (body.returnData.return_yeild).toFixed(4),
+                    "all_process.$.returnCarat": (body.returnData?.return_carat).toFixed(4),
+                    "all_process.$.returnPcs" : body.returnData?.return_peice,
+                    "all_process.$.returnYield": (body.returnData?.return_yeild).toFixed(4),
                     occupy_by: false,
                     return : returnStatus,
-                    last_carat: body.returnData.return_carat,
+                    last_carat: body.returnData?.return_carat,
                     return_date : return_date,
                     return_pcs : return_pcs,
                 }
             }
         );
-        if(polishedData.factory_id){
+        console.log("Part 1")
+
+        if(polishedData?.factory_id){
             await Factory.updateOne({ _id: polishedData?.factory_id }, 
                 { $inc: { copyCarat: body.returnData.return_carat , polished : polishRough , returnCarat :  body?.returnData?.return_carat , loseCarat : loseCarat , polished_pcs : return_pcs},
             })
