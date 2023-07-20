@@ -10,6 +10,9 @@ const cors = require("cors");
 
 const dConnection = 'mongodb+srv://Uttam28s:76986Utt%40m@diamond.sswlz.mongodb.net/Diamond?retryWrites=true&w=majority'
 
+// testURL
+// const dConnection = 'mongodb+srv://umoradiya31:admin@diamonderp.q4pr4c2.mongodb.net/'
+
 // 'mongodb+srv://Uttam28s:76986%40Uttam@diamond.sswlz.mongodb.net/Diamond?retryWrites=true&w=majority'
 // env.DB_CONNECTION +
 // "://" +
